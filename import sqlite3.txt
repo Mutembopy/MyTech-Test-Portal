@@ -1,0 +1,8 @@
+import sqlite3
+conn = sqlite3.connect('technicians.db')
+conn.execute("ALTER TABLE technicians ADD COLUMN password TEXT;")
+conn.execute("ALTER TABLE technicians ADD COLUMN email TEXT;")
+cursor.execute("UPDATE technicians SET email = ? WHERE name = ?", ('MyTech@MyTech.com', 'John'))
+conn.execute("ALTER TABLE reports ADD COLUMN technician_id INTEGER;")
+conn.commit()
+conn.close()

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Technician Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #ffffff;
+      box-sizing: border-box;
+    }
+
+    body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background-color: #ffa500;
+      border-radius: 10px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+      width: 100%;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffa500;
+      margin-bottom: 20px;
+      font-size: 2em;
+    }
+
+    .profile-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .profile-preview a img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #ffa500;
+      object-fit: cover;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .profile-preview a img:hover {
+      box-shadow: 0 0 12px rgba(255, 165, 0, 0.6);
+      transform: scale(1.05);
+    }
+
+    .profile-preview .info {
+      flex-grow: 1;
+      min-width: 200px;
+      text-align: center;
+    }
+
+    .profile-preview h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      justify-content: center;
+    }
+
+    .dashboard-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-cards .card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+      flex: 1 1 100%;
+      min-width: 240px;
+      max-width: 300px;
+      box-sizing: border-box;
+      color: #fff;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dashboard-cards .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 15px rgba(255, 165, 0, 0.3);
+    }
+
+    .dashboard-cards .card h3 {
+      margin: 0 0 10px;
+      color: #ffa500;
+      font-size: 1.1em;
+    }
+
+    .dashboard-cards .card p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-top: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+
+    th, td {
+      padding: 10px 15px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    th {
+      background-color: #333;
+      color: #ffa500;
+    }
+
+    td {
+      background-color: #222;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    .status-completed {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .status-pending {
+      background-color: #ffc107;
+      color: #fff;
+    }
+
+    .status-inprogress {
+      background-color: #fff;;
+      color: #fff;
+    }
+
+    .chart-container {
+      margin-top: 30px;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+      max-height: 400px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.6em;
+      }
+
+      .profile-preview a img {
+        width: 70px;
+        height: 70px;
+      }
+
+      .dashboard-cards .card {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+
+      table {
+        font-size: 0.85em;
+      }
+
+      .profile-preview h2 {
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glass-container">
+      <h1>Technician Dashboard</h1>
+
+      <div class="profile-preview">
+        <a href="{{ url_for('profile') }}">
+          <img src="{{ url_for('static', filename='uploads/' ~ user.photo) if user.photo else url_for('static', filename='smile.png') }}" alt="Technician Avatar">
+        </a>
+        <div class="info">
+          <h2>{{ user.name }}</h2>
+          <p>Email: {{ user.email }}</p>
+          <p>Role: {{ user.role }}</p>
+        </div>
+      </div>
+
+      <div class="dashboard-cards">
+        <a href="{{ url_for('tech_summary') }}" class="card-link">
+          <div class="card">
+            <h3>Total Reports</h3>
+            <p>{{ total_reports }}</p>
+            <small>View all submitted reports</small>
+          </div>
+        </a>
+        <div class="card">
+          <h3>Completed</h3>
+          <p>{{ completed }}</p>
+          <small>Jobs completed so far</small>
+        </div>
+        <a href="{{ url_for('report') }}" class="card-link">
+          <div class="card">
+            <h3>In Progress</h3>
+            <p>{{ in_progress }}</p>
+            <small>Log new jobs</small>
+          </div>
+        </a>
+        <div class="card">
+          <a href="{{ url_for('chat') }}" class="card-link">
+          <h3>Latest Message</h3>
+          <p>{{ latest_msg[1] if latest_msg else 'No messages yet.' }}</p>
+          <small>From: {{ latest_msg[0] if latest_msg else 'System' }}</small>
+          </a>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <h3>Recent Job History</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Job ID</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for job in recent_jobs %}
+            <tr>
+              <td>{{ job.id }}</td>
+              <td>{{ job.description }}</td>
+              <td>{{ job.status }}</td>
+              <td>{{ job.date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-container">
+        <h3>Performance Chart</h3>
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const performanceChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{ chart.labels | safe }},
+        datasets: [{
+          label: 'Jobs Completed',
+          data: {{ chart.data | safe }},
+          backgroundColor: 'rgba(255, 165, 0, 0.6)',
+                    borderColor: 'rgba(255, 165, 0, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#fff' },
+            grid: { color: '#444' }
+          },
+          x: {
+            ticks: { color: '#fff' },
+            grid: { color: '#444' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#fff'
+            }
+          },
+          tooltip: {
+            backgroundColor: '#333',
+            titleColor: '#ffa500',
+            bodyColor: '#fff'
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

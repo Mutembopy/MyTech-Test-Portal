@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login to MyTech Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .animated-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 20%,  #74ebd5, #203a43, #2c5364);
+      animation: bgShift 15s infinite linear;
+      z-index: -1;
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    .button-wrapper button:active {
+        transform: scale(0.98);
+        background: darkorange;
+    }
+
+
+    @keyframes bgShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 40px 32px;
+      max-width: 400px;
+      width: 100%;
+      color: white;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-wrapper {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      width: 120px;
+      height: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    }
+
+    .brand-accent {
+      color: orange;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #f1f1f1;
+      font-weight: 500;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-size: 1em;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    input[type="text"]:focus, input[type="password"]:focus {
+      background: rgba(255, 255, 255, 0.35);
+      outline: none;
+    }
+
+    .button-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .button-wrapper button {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: orange;
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,165,0,0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    .button-wrapper button:hover {
+      transform: scale(1.02);
+      background: darkorange;
+      box-shadow: 0 6px 20px rgba(255,140,0,0.5);
+    }
+
+    .rotating-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120px;
+      height: 120px;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      animation: rotate 2s linear infinite;
+    }
+
+    .rotating-ring circle {
+      stroke: url(#grad);
+      stroke-width: 4;
+      fill: none;
+      stroke-dasharray: 280;
+      filter: drop-shadow(0 0 6px orange);
+    }
+
+    @keyframes rotate {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,165,0, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(255,165,0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,165,0, 0); }
+    }
+
+    .error {
+      color: #ff4f4f;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .headline {
+      text-align: center;
+      font-size: 1.5em;
+      margin-bottom: 16px;
+      color: white;
+    }
+    
+    @media (max-width: 576px) {
+    .glass-container {
+    padding: 24px 16px;
+    border-radius: 12px;
+    }
+
+  .logo-wrapper {
+    margin-bottom: 16px;
+  }
+
+  .logo {
+    width: 100px;
+    height: auto;
+  }
+
+  .headline {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+  }
+
+  label {
+    font-size: 0.95em;
+  }
+
+  input[type="text"], input[type="password"] {
+    font-size: 0.95em;
+    padding: 10px;
+    margin-bottom: 14px;
+  }
+
+  .button-wrapper {
+    margin-top: 16px;
+  }
+
+  .button-wrapper button {
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .rotating-ring {
+    width: 90px;
+    height: 90px;
+  }
+
+  .error {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="animated-bg"></div>
+
+  <div class="glass-container">
+    <div class="logo-wrapper">
+      <img src="{{ url_for('static', filename='m.png') }}" alt="welcome">
+      <h1 class="headline">Login to <span class="brand-accent">MyTech Portal</span></h1>
+    </div>
+
+    {% if error %}
+      <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required>
+
+      <div class="button-wrapper">
+        <button type="submit">Login</button>
+        <svg class="rotating-ring" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color: orange; stop-opacity: 1" />
+              <stop offset="100%" style="stop-color: gold; stop-opacity: 1" />
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" />
+        </svg>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

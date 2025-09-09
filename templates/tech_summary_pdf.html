@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Summary PDF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      color: #000;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(31,38,135,0.2);
+      border: 1px solid rgba(200,200,200,0.5);
+    }
+
+    h2 {
+      color: #df9010;
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 2em;
+      letter-spacing: 1px;
+    }
+
+    .suggestions {
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(200,200,200,0.5);
+    }
+
+    .suggestions strong {
+      color: #203a43;
+    }
+
+    .suggestions ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #000;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 0.95em;
+      min-width: 600px;
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #203a43;
+    }
+
+    thead {
+      background: linear-gradient(to right, #74ebd5, #203a43);
+    }
+
+    th, td {
+      border: 1px solid rgba(200,200,200,0.5);
+      padding: 10px;
+      text-align: left;
+      background: rgba(255,255,255,0.95);
+      color: #000;
+    }
+
+    th {
+      color: #df9010;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.85);
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 24px 16px;
+        border-radius: 12px;
+      }
+
+      h2 {
+        font-size: 1.4em;
+      }
+
+      table {
+        font-size: 0.85em;
+      }
+
+      .suggestions {
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Weekly Summary for {{ user.name }}</h2>
+
+    <div class="suggestions">
+      <strong>Suggestions:</strong>
+      <ul>
+        {% for suggestion in suggestions %}
+          <li>{{ suggestion }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <table>
+      <caption>Recent Reports</caption>
+      <thead>
+        <tr>
+          <th>Job Number</th>
+          <th>Progress</th>
+          <th>Challenges</th>
+          <th>Comments</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if reports %}
+          {% for report in reports %}
+            <tr>
+              <td>{{ report.job_number }}</td>
+              <td>{{ report.progress }}%</td>
+              <td>{{ report.challenges }}</td>
+              <td>{{ report.comments }}</td>
+              <td>{{ report.start_time }}</td>
+              <td>{{ report.end_time }}</td>
+              <td>{{ report.created_at }}</td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="7">No reports available.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+| Name          | Email                                               | Password    | Role                 |
+| ------------- | --------------------------------------------------- | ----------- | -------------------- |
+| Alice Mwansa  | [alice@techcorp.com](mailto:alice@techcorp.com)     | password123 | Network Engineer     |
+| Brian Zulu    | [brian@techcorp.com](mailto:brian@techcorp.com)     | password123 | Systems Analyst      |
+| Chipo Banda   | [chipo@techcorp.com](mailto:chipo@techcorp.com)     | password123 | IoT Specialist       |
+| Derrick Phiri | [derrick@techcorp.com](mailto:derrick@techcorp.com) | password123 | Cybersecurity Expert |

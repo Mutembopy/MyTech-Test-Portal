@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  body {
+    background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+
+  .glass-panel {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    color: #333;
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #185a9d;
+    letter-spacing: 1px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-control {
+    background: rgba(255,255,255,0.7);
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-control:focus {
+    background: rgba(255,255,255,0.9);
+    outline: none;
+    box-shadow: 0 0 0 2px #185a9d33;
+  }
+
+  .btn-warning {
+    background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+    border: none;
+    font-weight: bold;
+    border-radius: 10px;
+    padding: 10px 20px;
+    align-self: flex-start;
+  }
+
+  .accordion-item {
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .accordion-button {
+    background: rgba(255,255,255,0.8);
+    font-weight: bold;
+    color: #185a9d;
+  }
+
+  .accordion-button:focus {
+    box-shadow: none;
+  }
+
+  .accordion-body {
+    background: rgba(255,255,255,0.5);
+    padding: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .text-muted {
+    font-size: 0.85em;
+  }
+
+  @media (max-width: 600px) {
+    .glass-panel {
+      padding: 20px;
+    }
+
+    h2 {
+      font-size: 1.4em;
+    }
+
+    .form-control {
+      font-size: 0.95em;
+    }
+
+    .btn-warning {
+      width: 100%;
+      text-align: center;
+    }
+
+    .accordion-button {
+      font-size: 0.95em;
+    }
+
+    .accordion-body {
+      font-size: 0.9em;
+    }
+
+    .text-muted {
+      font-size: 0.75em;
+    }
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="glass-panel">
+    <h2>🧠 Expandable Ideas</h2>
+
+    <form method="post" action="/add_idea" class="mb-4">
+      <input name="title" class="form-control" placeholder="Feature Title" required>
+      <textarea name="description" class="form-control" placeholder="Description" required></textarea>
+      <button type="submit" class="btn btn-warning">Add Idea</button>
+    </form>
+
+    <div class="accordion" id="ideasAccordion">
+      {% for idea in ideas %}
+      <div class="accordion-item mb-3">
+        <h2 class="accordion-header" id="heading{{ idea[0] }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ idea[0] }}">
+            {{ idea[1] }}
+          </button>
+        </h2>
+        <div id="collapse{{ idea[0] }}" class="accordion-collapse collapse" data-bs-parent="#ideasAccordion">
+          <div class="accordion-body">{{ idea[2] }}</div>
+          <small class="text-muted ms-3">Created: {{ idea[3] }}</small>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

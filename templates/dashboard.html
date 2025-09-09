@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at 20% 20%, #74ebd5, #203a43, #2c5364);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px;
+    }
+
+    .glass-container {
+      background: rgba(255,255,255,0.18);
+      box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 30px;
+      margin-bottom: 32px;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #ffbb0e;
+      margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.7);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .profile-preview {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .profile-preview img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 16px;
+    }
+
+    .notification {
+      background: rgba(255,255,255,0.7);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: left;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow-x: auto;
+      display: block;
+    }
+
+    th, td {
+      border: 1px solid rgba(200,200,200,0.5);
+      padding: 10px;
+      text-align: left;
+      background: rgba(255,255,255,0.7);
+    }
+
+    th {
+      background: rgba(180, 4, 4, 0.9);
+      color: white;
+    }
+
+    .chat-popup {
+      margin-top: 20px;
+    }
+
+    .delete-link {
+      color: red;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .glass-container {
+        padding: 20px;
+      }
+
+      .profile-preview img {
+        width: 80px;
+        height: 80px;
+      }
+
+      .dashboard-cards {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="navbar">
+      <a class="btn-logout" href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+
+    <div class="profile-preview">
+      {% if user.photo %}
+        <img src="{{ url_for('static', filename='uploads/' ~ user.photo) }}" alt="Profile Photo">
+      {% else %}
+        <img src="{{ url_for('static', filename='smile.png') }}" alt="Profile Photo">
+      {% endif %}
+      <h3>{{ user.name }}</h3>
+      <p>{{ user.email }} | {{ user.role }}</p>
+      <a href="{{ url_for('edit_profile') }}">View Profile</a>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('add_technician') }}">Add Technician</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="notification {{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="glass-container">
+      <h2>Welcome, {{ user.name }}</h2>
+      <div class="glassy-card">Your latest tasks and alerts here...</div>
+    </div>
+
+    <div class="dashboard-cards">
+      <div class="card">
+        <h3 id="totalReports">{{ total_reports }}</h3>
+        <p>Reports</p>
+      </div>
+      <div class="card">
+        <a href="{{ url_for('api_reports') }}" style="text-decoration: none; color: inherit;">
+          <h3>{{ in_progress }}</h3>
+          <p>In Progress</p>
+        </a>
+      </div>
+      <div class="card">
+        <h3 id="completed">{{ completed }}</h3>
+        <p>Summary</p>
+      </div>
+      <a href="{{ url_for('add_technician') }}" class="card">
+        <h3>Add Technician</h3>
+        <p>Click to add technician</p>
+      </a>
+    </div>
+
+    <div class="notification">
+      <strong>Latest Chat:</strong> {{ latest_msg[0] if latest_msg else 'No messages yet.' }}
+    </div>
+
+    <section class="chat-popup glass-card" id="chatPopup">
+      <h3>Team Chat</h3>
+      <div id="chat-box" class="chat-box"></div>
+      <input id="msg" type="text" placeholder="Type message..." autocomplete="off">
+      <button class="btn-accent" onclick="sendMsg()">Send</button>
+    </section>
+
+    <section class="glass-container">
+      <h3 style="color: #df9010;">Current Technicians</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if technicians %}
+            {% for tech in technicians %}
+              <tr>
+                <td>{{ tech.name }}</td>
+                <td>{{ tech.role }}</td>
+                <td>{{ tech.contact }}</td>
+                <td>{{ tech.email }}</td>
+                <td>
+                  <a href="{{ url_for('delete_technician', id=tech.id) }}"
+                     class="delete-link"
+                     onclick="return confirm('Delete {{ tech.name }}?');">Delete</a>
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="5">No technicians found.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    let summaryChart;
+    function updateChart(data) {
+      const ctx = document.getElementById('summaryChart')?.getContext('2d');
+      if (!ctx) return;
+      if (summaryChart) summaryChart.destroy();
+      summaryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Completed', 'In Progress', 'Pending'],
+          datasets: [{
+            data: [data.completed, data.in_progress, data.pending],
+            backgroundColor: ['#FFA500', '#FFECB3', '#fff'],
+            borderWidth: 2
+          }]
+        },
+        options: { cutout: '70%' }
+      });
+    }
+
+    function updateDashboard() {
+      fetch('/api/reports')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('totalReports').textContent = data.total;
+          document.getElementById('completed').textContent = data.completed;
+          updateChart(data);
+        })
+        .catch(error => console.error('Error fetching report data:', error));
+    }
+
+    function sendMsg() {
+      const msgInput = document.getElementById('msg');
+      const

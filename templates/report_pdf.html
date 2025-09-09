@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Technician Daily Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      margin: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    td, th {
+      border: 1px solid #000;
+      padding: 6px;
+      vertical-align: top;
+    }
+    th {
+      background-color: #ffc526;
+    }
+    .section-title {
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Technician Daily Report</h2>
+
+  <table>
+    <tr><th>Job ID</th><td>{{ report[0] }}</td></tr>
+    <tr><th>Technician</th><td>{{ report[1] }}</td></tr>
+    <tr><th>Client</th><td>{{ report[2] }}</td></tr>
+    <tr><th>Location</th><td>{{ report[3] }}</td></tr>
+    <tr><th>Date</th><td>{{ report[4] }}</td></tr>
+    <tr><th>Start Time</th><td>{{ report[5] }}</td></tr>
+    <tr><th>End Time</th><td>{{ report[6] }}</td></tr>
+    <tr><th>Duration</th><td>{{ report[7] }}</td></tr>
+    <tr><th>Team on Site</th><td>{{ report[8] }}</td></tr>
+  </table>
+
+  <div class="section-title">Work Done</div>
+  <table>
+    <tr><td>{{ report[9] }}</td></tr>
+  </table>
+
+  <div class="section-title">Issues Found</div>
+  <table>
+    <tr><td>{{ report[10] }}</td></tr>
+  </table>
+s
+  <div class="section-title">Recommendations</div>
+  <table>
+    <tr><td>{{ report[11] }}</td></tr>
+  </table>
+
+  <div class="section-title">Submitted On</div>
+  <table>
+    <tr><td>{{ report[12] }}</td></tr>
+  </table>
+</body>
+</html>

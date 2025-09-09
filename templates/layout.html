@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Dashboard{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Technician Portal Dashboard">
+  <meta name="theme-color" content="#203a43">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/glassy.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='mts.png') }}">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #203a43;
+      padding: 10px 20px;
+      color: white;
+      position: relative;
+    }
+
+    .main-header .logo {
+      height: 40px;
+    }
+
+    nav {
+      display: flex;
+      gap: 15px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a[aria-current="page"] {
+      border-bottom: 2px solid orange;
+    }
+
+    .sidebar {
+      background: #2c5364;
+      padding: 20px;
+      width: 220px;
+      min-height: calc(100vh - 60px);
+      color: white;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin-bottom: 12px;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .sidebar a.active {
+      color: orange;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    footer {
+      text-align: center;
+      padding: 10px;
+      background: #203a43;
+      color: white;
+    }
+
+    .flash {
+      background: orange;
+      color: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .main-content {
+        padding: 15px;
+      }
+
+      .mobile-nav-toggle {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        background: orange;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .mobile-sidebar {
+        display: none;
+        background: #2c5364;
+        padding: 20px;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+
+      .mobile-sidebar ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .mobile-sidebar li {
+        margin-bottom: 12px;
+      }
+
+      .mobile-sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .mobile-sidebar a.active {
+        color: orange;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="main-header">
+    <img src="{{ url_for('static', filename='smile.png') }}" alt="MyTech Logo" class="logo">
+    <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰ Menu</button>
+    <nav>
+      <a href="{{ url_for('dashboard') }}" {% if request.path == '/dashboard' %}aria-current="page"{% endif %}>Dashboard</a>
+      <a href="{{ url_for('chat') }}" {% if request.path == '/chat' %}aria-current="page"{% endif %}>Chat</a>
+      <a href="{{ url_for('profile') }}" {% if request.path == '/profile' %}aria-current="page"{% endif %}>Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <div class="mobile-sidebar" id="mobileSidebar">
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}" class="{% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a></li>
+      <li><a href="{{ url_for('api_reports') }}" class="{% if request.path == '/api/reports' %}active{% endif %}">Reports</a></li>
+      <li><a href="{{ url_for('chat') }}" class="{% if request.path == '/chat' %}active{% endif %}">Chat</a></li>
+      <li><a href="{{ url_for('profile') }}" class="{% if request.path == '/profile' %}active{% endif %}">Profile</a></li>
+      {% if url_for('settings', _external=False) %}
+        <li><a href="{{ url_for('settings') }}" class="{% if request.path == '/settings' %}active{% endif %}">Settings</a></li>
+      {% endif %}
+      {% if url_for('ideas', _external=False) %}
+        <li><a href="{{ url_for('ideas') }}" class="{% if request.path == '/ideas' %}active{% endif %}">Ideas</a></li>
+      {% endif %}
+      <li><a href="{{ url_for('logout') }}">Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="layout-body" style="display: flex;">
+    <div class="sidebar">
+      <ul>
+        <li><a href="{{ url_for('dashboard') }}" class="{% if request.path == '/dashboard' %}active{% endif %}">Dashboard</a></li>
+        <li><a href="{{ url_for('api_reports') }}" class="{% if request.path == '/api/reports' %}active{% endif %}">Reports</a></li>
+        <li><a href="{{ url_for('chat') }}" class="{% if request.path == '/chat' %}active{% endif %}">Chat</a></li>
+        <li><a href="{{ url_for('profile') }}" class="{% if request.path == '/profile' %}active{% endif %}">Profile</a></li>
+        {% if url_for('settings', _external=False) %}
+          <li><a href="{{ url_for('settings') }}" class="{% if request.path == '/settings' %}active{% endif %}">Settings</a></li>
+        {% endif %}
+        {% if url_for('ideas', _external=False) %}
+          <li><a href="{{ url_for('ideas') }}" class="{% if request.path == '/ideas' %}active{% endif %}">Ideas</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="flash">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+  <footer>
+    &copy; {{ current_year if current_year else 2025 }} | MyTech System Solutions
+  </footer>
+
+  <script>
+    function toggleMobileNav() {
+      const sidebar = document.getElementById('mobileSidebar');
+      sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      function revealOnScroll() {
+        document.querySelectorAll('.fade-in').forEach(function(el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 60) {
+            el.classList.add('visible');
+          }
+        });
+      }
+      window.addEventListener('scroll', revealOnScroll);
+      revealOnScroll();
+    });
+  </script>
+</body>
+</html>

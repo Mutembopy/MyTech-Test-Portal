@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Weekly Summary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .glass-container {
+      background: rgba(255,255,255,0.18);
+      box-shadow: 0 8px 32px rgba(31,38,135,0.37);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 40px 32px;
+      max-width: 900px;
+      width: 95%;
+      box-sizing: border-box;
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #df9010;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+      font-size: 2em;
+    }
+
+    .logout-link {
+      display: block;
+      text-align: right;
+      margin-bottom: 12px;
+      color: #df9010;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .logout-link:hover {
+      text-decoration: underline;
+    }
+
+    .suggestions {
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 18px;
+      color: #000;
+    }
+
+    .suggestions ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95em;
+      min-width: 600px;
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #ffffff;
+    }
+
+    thead {
+      background: radial-gradient(circle at 20% 20%, #74ebd5, #203a43, #2c5364);
+    }
+
+    th, td {
+      border: 1px solid rgba(200,200,200,0.5);
+      padding: 10px;
+      text-align: left;
+      background: rgba(255,255,255,0.7);
+      color: #000;
+    }
+
+    th {
+      color: #df9010;
+    }
+
+    .back-link, .download-link {
+      display: block;
+      text-align: center;
+      color: #df9010;
+      font-weight: bold;
+      text-decoration: none;
+      margin-top: 20px;
+    }
+
+    .back-link:hover, .download-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 576px) {
+      .glass-container {
+        padding: 24px 16px;
+        border-radius: 12px;
+      }
+
+      h2 {
+        font-size: 1.4em;
+      }
+
+      table {
+        font-size: 0.85em;
+      }
+
+      .suggestions {
+        font-size: 0.9em;
+      }
+
+      .logout-link, .back-link, .download-link {
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-container">
+    <a class="logout-link" href="{{ url_for('tech_logout') }}">Logout</a>
+    <h2>Weekly Summary for {{ user.name }}</h2>
+
+    <div class="suggestions">
+      <strong>Suggestions:</strong>
+      <ul>
+        {% for suggestion in suggestions %}
+          <li>{{ suggestion }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <caption>Recent Reports</caption>
+        <thead>
+          <tr>
+            <th>Job Number</th>
+            <th>Progress</th>
+            <th>Challenges</th>
+            <th>Comments</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if reports %}
+            {% for report in reports %}
+              <tr>
+                <td>{{ report.job_number }}</td>
+                <td>{{ report.progress }}%</td>
+                <td>{{ report.challenges }}</td>
+                <td>{{ report.comments }}</td>
+                <td>{{ report.start_time }}</td>
+                <td>{{ report.end_time }}</td>
+                <td>{{ report.created_at }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7">No reports available.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <a href="{{ url_for('export_summary_pdf') }}" class="download-link">Download PDF</a>
+    <a href="{{ url_for('report') }}" class="back-link">Back to Report</a>
+    <a href="{{ url_for('tech_dashboard') }}" class="back-link">← Back to Dashboard</a>
+  </div>
+</body>
+</html>

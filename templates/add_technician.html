@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Technician</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Select2 Styles -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background: radial-gradient(circle at 20% 20%, #74ebd5, #203a43, #2c5364);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .glass-container {
+      background: rgba(255,255,255,0.18);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: none;
+      background: rgba(255,255,255,0.7);
+      color: #000;
+    }
+
+    small {
+      display: block;
+      margin-top: -12px;
+      margin-bottom: 12px;
+      font-size: 0.85em;
+      color: #eee;
+    }
+
+    .select2-container--default .select2-selection--single {
+      background-color: rgba(255,255,255,0.7);
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      color: #000;
+    }
+
+    .select2-results__option {
+      color: #000;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: orange;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: darkorange;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-container">
+    <h2>Add Technician</h2>
+    <form method="POST">
+      <label for="name">Name</label>
+      <input type="text" name="name" required>
+
+      <label for="role">Role</label>
+      <select name="role" id="roleSelect" required>
+        {% set roles = {
+          "Cloud Network Technicians": "🌩️",
+          "VoIP Technicians": "📞",
+          "Help Desk/Support Technicians": "🧑‍💻",
+          "Field Technicians": "🚐",
+          "Wireless Technicians": "📡",
+          "Security Technicians/Cybersecurity Specialists": "🛡️",
+          "Network Engineers": "🧠",
+          "Systems Administrators": "🖥️",
+          "Network Administrators": "🔧",
+          "Network Technicians": "🔌",
+          "Intern": "🎓"
+        } %}
+        {% for r, icon in roles.items() %}
+          <option value="{{ r }}">{{ icon }} {{ r }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="contact">Contact</label>
+      <input type="text" name="contact" required>
+
+      <label for="email">Email</label>
+      <input type="email" name="email" required>
+      <small>Use a valid work email (e.g. toni@mytech.com)</small>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" required>
+
+      <button type="submit">Add Technician</button>
+    </form>
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
+  </div>
+
+  <!-- Select2 Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      $('#roleSelect').select2({
+        width: '100%',
+        templateResult: formatRole,
+        templateSelection: formatRole
+      });
+
+      function formatRole(state) {
+        if (!state.id) return state.text;
+        const icon = state.text.slice(0, 2);
+        const label = state.text.slice(2).trim();
+        return $('<span><strong>' + icon + '</strong> ' + label + '</span>');
+      }
+    });
+  </script>
+</body>
+</html>

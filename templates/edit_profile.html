@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+
+    <!-- Select2 Styles -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: radial-gradient(circle at 20% 20%, #74ebd5, #203a43, #2c5364);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .glass-container {
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            color: #fff;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        input::placeholder {
+            color: #ccc;
+        }
+
+        .select2-container--default .select2-selection--single {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .select2-results__option {
+            color: #000;
+        }
+
+        .error {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+        }
+
+        @media (max-width: 600px) {
+            .glass-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if user %}
+    <div class="glass-container">
+        <a href="{{ url_for('tech_dashboard') }}" class="back-button">← Back dashboard</a>
+        <h2>Edit Profile</h2>
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Name:</label>
+                <input type="text" name="name" value="{{ user[0] }}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label>Role:</label>
+                <select name="role" id="roleSelect" required>
+                    {% set roles = {
+                        "Cloud Network Technicians": "🌩️",
+                        "VoIP Technicians": "📞",
+                        "Help Desk/Support Technicians": "🧑‍💻",
+                        "Field Technicians": "🚐",
+                        "Wireless Technicians": "📡",
+                        "Security Technicians/Cybersecurity Specialists": "🛡️",
+                        "Network Engineers": "🧠",
+                        "Systems Administrators": "🖥️",
+                        "Network Administrators": "🔧",
+                        "Network Technicians": "🔌",
+                        "Intern": "🎓"
+                    } %}
+                    {% for r, icon in roles.items() %}
+                        <option value="{{ r }}" {% if user[1] == r %}selected{% endif %}>{{ icon }} {{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" name="email" value="{{ user[3] }}" required>
+                <span class="error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Contact:</label>
+                <input type="text" name="contact" value="{{ user[2] }}" required>
+                <span class="error" id="contactError"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Profile Photo:</label>
+                <input type="file" name="file" accept="image/*">
+            </div>
+
+            <button type="submit" id="submitBtn" disabled>Update Profile</button>
+        </form>
+    </div>
+    {% else %}
+    <p style="color: white;">User not found.</p>
+    {% endif %}
+
+    <!-- Select2 Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Select2 with emoji formatting
+        $('#roleSelect').select2({
+            width: '100%',
+            templateResult: formatRole,
+            templateSelection: formatRole
+        });
+
+        function formatRole(state) {
+            if (!state.id) return state.text;
+            const icon = state.text.slice(0, 2); // Emoji prefix
+            const label = state.text.slice(2).trim();
+            return $('<span><strong>' + icon + '</strong> ' + label + '</span>');
+        }
+
+        // Live validation
+        const emailInput = document.querySelector('input[name="email"]');
+        const contactInput = document.querySelector('input[name="contact"]');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function validateEmail() {
+            const email = emailInput?.value || '';
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            document.getElementById('emailError').textContent = valid ? '' : 'Invalid email';
+            return valid;
+        }
+
+        function validateContact() {
+            const contact = contactInput.value;
+            const valid = /^\d{10,15}$/.test(contact);
+            document.getElementById('contactError').textContent = valid ? '' : 'Enter 10–15 digits';
+            return valid;
+        }
+
+        function checkForm() {
+            const emailValid = validateEmail();
+            const contactValid = validateContact();
+            submitBtn.disabled = !(emailValid && contactValid);
+        }
+        
+        emailInput?.addEventListener('input', checkForm);
+        contactInput.addEventListener('input', checkForm);
+        checkForm(); // Initial check
+    });
+    </script>
+</body>
+</html>
